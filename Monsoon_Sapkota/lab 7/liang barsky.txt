@@ -1,0 +1,66 @@
+import matplotlib.pyplot as plt
+
+def liang_barsky(x1, y1, x2, y2, xmin, ymin, xmax, ymax):
+    dx = x2 - x1
+    dy = y2 - y1
+
+    u1 = 0
+    u2 = 1
+
+    p = [-dx, dx, -dy, dy]
+    q = [x1 - xmin, xmax - x1, y1 - ymin, ymax - y1]
+
+    for i in range(4):
+        if p[i] == 0:
+            if q[i] < 0:
+                return None
+        else:
+            t = q[i] / p[i]
+            if p[i] < 0:
+                u1 = max(u1, t)
+            else:
+                u2 = min(u2, t)
+
+    if u1 > u2:
+        return None
+
+    nx1 = x1 + u1 * dx
+    ny1 = y1 + u1 * dy
+    nx2 = x1 + u2 * dx
+    ny2 = y1 + u2 * dy
+
+    return nx1, ny1, nx2, ny2
+
+
+# Window boundaries
+xmin, ymin = 10, 10
+xmax, ymax = 100, 100
+
+# Line coordinates
+x1, y1 = 0, 0
+x2, y2 = 120, 120
+
+# Get clipped line
+clipped = liang_barsky(x1, y1, x2, y2, xmin, ymin, xmax, ymax)
+
+# Plotting
+plt.figure()
+
+# Draw clipping window (rectangle)
+plt.plot([xmin, xmax, xmax, xmin, xmin],
+         [ymin, ymin, ymax, ymax, ymin])
+
+# Original line (Red)
+plt.plot([x1, x2], [y1, y2])
+
+# Clipped line (Green)
+if clipped:
+    nx1, ny1, nx2, ny2 = clipped
+    plt.plot([nx1, nx2], [ny1, ny2])
+
+plt.title("Liang-Barsky Line Clipping")
+plt.xlim(0, 130)
+plt.ylim(0, 130)
+plt.gca().set_aspect('equal', adjustable='box')
+
+plt.show()
